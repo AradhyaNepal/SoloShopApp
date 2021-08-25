@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:solo_shop_app_practice/ManageProduct.dart';
 import 'package:solo_shop_app_practice/screen/orders_detail/page/OrdersPage.dart';
 import '../../screen/products_overview/page/ProductsOverview.dart';
 class DrawerWidget extends StatelessWidget {
@@ -27,6 +28,15 @@ class DrawerWidget extends StatelessWidget {
             title: Text('Orders'),
             onTap: (){
               Navigator.pushReplacementNamed(context,OrderPage.route);
+            },
+
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.sixteen_mp),
+            title: Text('Manage Product'),
+            onTap: (){
+              Navigator.pushReplacementNamed(context,ManageProduct.route);
             },
 
           )

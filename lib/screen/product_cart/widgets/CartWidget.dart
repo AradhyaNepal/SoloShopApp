@@ -10,6 +10,31 @@ class CartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
+      confirmDismiss: (_){
+        return showDialog(
+            context: context,
+            builder: (context){
+                return AlertDialog(
+                  title: Text('Are you sure?'),
+                  content: Text('Do you really want to remove item form the cart'),
+                  actions: [
+                    TextButton(
+                        onPressed: (){
+                          Navigator.pop(context,true);
+                        },
+                        child: Text('Yes')
+                    ),
+                    TextButton(
+                        onPressed: (){
+                          Navigator.pop(context,false);
+
+                        },
+                        child: Text('No')
+                    ),
+                  ],
+                );
+            });
+      },
       key: ValueKey(id),
       background: Container(
         color: Theme.of(context).errorColor,

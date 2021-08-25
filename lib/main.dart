@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:solo_shop_app_practice/ManageProduct.dart';
+import 'package:solo_shop_app_practice/edit_product.dart';
 import 'package:solo_shop_app_practice/screen/orders_detail/page/OrdersPage.dart';
 import 'package:solo_shop_app_practice/screen/orders_detail/providers/OrderProvider.dart';
 import 'package:solo_shop_app_practice/screen/product_cart/page/CartPage.dart';
@@ -37,6 +39,8 @@ class MyApp extends StatelessWidget {
           ProductDetails.route:(context)=>ProductDetails(),
           CartPage.route:(context)=>CartPage(),
           OrderPage.route:(context)=>OrderPage(),
+          ManageProduct.route:(context)=>ManageProduct(),
+          EditProduct.route:(context)=>EditProduct(),
         },
       ),
     );

@@ -44,4 +44,30 @@ class ProductsProvider with ChangeNotifier{
 
 
 
+  void addProduct(Product product){
+    _items.add(product);
+    notifyListeners();
+  }
+
+
+  Product findById(String id){
+    return _items.firstWhere((element)=>element.id==id);
+
+
+  }
+
+  void updateProduct(String id,Product newProduct){
+    final productIndex=_items.indexWhere((element) => element.id==id);
+    if (productIndex>=0){
+      _items[productIndex]=newProduct;
+      notifyListeners();
+    }
+  }
+
+  void deleteProduct(String id){
+    _items.removeWhere((element) => element.id==id);
+    notifyListeners();
+  }
+
+
 }
