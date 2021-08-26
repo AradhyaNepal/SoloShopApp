@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProductsProvider with ChangeNotifier{
+  //Add auth in orders and products later
+  final String authToken;
+  ProductsProvider(this.authToken,this._items);
   List<Product> _items=[
   //   Product(
   //   id: 'p1',
@@ -49,7 +52,7 @@ class ProductsProvider with ChangeNotifier{
 
 
   Future<void> addProduct(Product product){
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json');
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json?auth=$authToken');
     return http.post(url,body:json.encode({
       'title':product.title,
       'description':product.description,
@@ -68,7 +71,7 @@ class ProductsProvider with ChangeNotifier{
   }
 
   Future<void> fetchProduct() async{
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json');
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json?auth=$authToken');
     try{
       final response=await http.get(url);
       final extractedData=json.decode(response.body) as Map<String,dynamic>;
@@ -104,7 +107,7 @@ class ProductsProvider with ChangeNotifier{
     final productIndex=_items.indexWhere((element) => element.id==id);
     if (productIndex>=0){
 
-      Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products/$id.json');
+      Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products/$id.json?auth=$authToken');
       await http.patch(url,body: json.encode({
         'title':newProduct.title,
         'description':newProduct.description,
@@ -118,7 +121,7 @@ class ProductsProvider with ChangeNotifier{
   }
 
   Future<void> deleteProduct(String id) async{
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products/$id.json');
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products/$id.json?auth=$authToken');
     int? existingProductIndex=items.indexWhere((element) => element.id==id);
     Product? existingProduct=_items[existingProductIndex];
     _items.removeAt(existingProductIndex);

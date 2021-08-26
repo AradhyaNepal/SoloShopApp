@@ -12,29 +12,45 @@ class ProductDetails extends StatelessWidget {
     final String id=ModalRoute.of(context)!.settings.arguments as String;
     Product loadedProduct=Provider.of<ProductsProvider>(context,listen: false).items.firstWhere((element) => element.id==id);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          loadedProduct.title,
-        ),
-
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 300,
-
+      // appBar: AppBar(
+      //   title: Text(
+      //     loadedProduct.title,
+      //   ),
+      //
+      // ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(loadedProduct.title),
+              background: Hero(
+              tag: id,
               child: Image.network(
                 loadedProduct.imageUrl,
                 fit:BoxFit.cover,
               ),
             ),
-            SizedBox(height: 10,),
-            Text('${loadedProduct.price})'),
-            SizedBox(height: 10,),
-            Text(loadedProduct.description),
-          ],
-        ),
+            ),
+
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Column(
+                  children: [
+                    SizedBox(height: 10,),
+                    Text('${loadedProduct.price})'),
+                    SizedBox(height: 10,),
+                    Text(loadedProduct.description),
+                    SizedBox(height:800 ,)
+                  ],
+                ),
+              ]
+            )
+          ),
+        ],
       ),
     );
   }

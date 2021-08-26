@@ -16,12 +16,17 @@ class SpecificProductWidget extends StatelessWidget {
       child: GridTile(
           child: GestureDetector(
             onTap: ()=>Navigator.pushNamed(context, ProductDetails.route,arguments: product.id),
-            child: Image.network(
-                product.imageUrl,
-              fit: BoxFit.cover,
-
+            child: Hero(
+              tag: product.id,
+              child: FadeInImage(
+                placeholder: AssetImage('images/placeholder.jpg'),
+                image: NetworkImage(
+                    product.imageUrl
+                ),
+                ),
+              ),
             ),
-          ),
+          
         footer: GridTileBar(
           backgroundColor: Colors.black54,
           leading: IconButton(

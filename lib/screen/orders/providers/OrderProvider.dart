@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 class OrderProvider with ChangeNotifier{
 
+  final String authToken;
+  OrderProvider(this.authToken);
   List<Order> _orders=[];
 
   List<Order> get orders{
@@ -12,7 +14,7 @@ class OrderProvider with ChangeNotifier{
   }
 
   Future<void> fetchOrder() async{
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/orders.json');
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/orders.json?auth=$authToken');
     final response=await http.get(url);
     final List<Order> loadedOrders=[];
     final Map<String,dynamic>? extractedData=json.decode(response.body) as Map<String,dynamic>;
@@ -37,7 +39,7 @@ class OrderProvider with ChangeNotifier{
   }
 
   Future<void> addOrder({required List<Cart> cartProducts,required double total}) async{
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/orders.json');
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/orders.json?auth=$authToken');
     final timeStamp=DateTime.now();
     final response=await http.post(url,body: json.encode({
       'amount':total,
