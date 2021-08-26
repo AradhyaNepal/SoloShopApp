@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:solo_shop_app_practice/screen/product_cart/providers/CartProvider.dart';
-
+import 'package:solo_shop_app_practice/screen/cart/providers/CartProvider.dart';
 class CartWidget extends StatelessWidget {
   final String id,title,productId;
   final double price;

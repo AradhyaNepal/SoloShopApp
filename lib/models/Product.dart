@@ -1,9 +1,11 @@
 
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier{
-  final String id;
+  String id;
   String title;
   String description;
   double price;
@@ -20,8 +22,24 @@ class Product with ChangeNotifier{
   }
   );
 
-  void toggleFavorites(){
+  void toggleFavorites() async{
+    bool oldStatus=isFavorite;
     isFavorite=!isFavorite;
     notifyListeners();
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products/$id.json');
+    try{
+      final response=await http.patch(url,body: json.encode({
+        'isFavorite':isFavorite
+      }));
+
+      if (response.statusCode>=400){
+        isFavorite=oldStatus;
+        notifyListeners();
+      }
+    }catch(error){
+      isFavorite=oldStatus;
+      notifyListeners();
+    }
+
   }
 }

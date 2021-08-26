@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solo_shop_app_practice/models/Product.dart';
-import 'package:solo_shop_app_practice/screen/products_overview/providers/ProductsProvider.dart';
+import 'package:solo_shop_app_practice/screen/products/providers/ProductsProvider.dart';
 
 class EditProduct extends StatefulWidget {
   static const route='EditProduct';
@@ -10,7 +10,7 @@ class EditProduct extends StatefulWidget {
 }
 
 class _EditProductState extends State<EditProduct> {
-
+  bool isLoading=false;
   var _editedProduct=Product(
       id: 'C10',
       title: '',
@@ -51,7 +51,7 @@ class _EditProductState extends State<EditProduct> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     if (_isInit){
-      final String? productId=ModalRoute.of(context)!.settings.arguments as String;
+      final String? productId=ModalRoute.of(context)!.settings.arguments as String?;
       if (productId!=null){
         _editedProduct=Provider.of<ProductsProvider>(context,listen: false).findById(productId);
         _initValues={
@@ -182,7 +182,8 @@ class _EditProductState extends State<EditProduct> {
                   ),
                 )
               ],
-            )
+            ),
+            isLoading?Center(child: CircularProgressIndicator(),):SizedBox(),
 
           ],
         ),
@@ -202,17 +203,51 @@ class _EditProductState extends State<EditProduct> {
   }
 
   void _saveForm(){
+    setState(() {
+      isLoading=true;
+
+    });
     if(_form.currentState!.validate()){
     _form.currentState!.save();
     if(forEdit){
-      Provider.of<ProductsProvider>(context,listen: false).updateProduct(_editedProduct.id, _editedProduct);
+      Provider.of<ProductsProvider>(context,listen: false).updateProduct(_editedProduct.id, _editedProduct).then((value) {
+        setState(() {
+          isLoading=false;
+        });
+        Navigator.pop(context);
+      }
+
+      );
 
     }
     else{
 
-      Provider.of<ProductsProvider>(context,listen: false).addProduct(_editedProduct);
+      Provider.of<ProductsProvider>(context,listen: false).addProduct(_editedProduct).then((value){
+        setState(() {
+          isLoading=false;
+        });
+        Navigator.pop(context);
+      }).catchError((error){
+         return showDialog<Null>(
+            context: context,
+            builder: (context)=>AlertDialog(
+              title: Text('Can not connect') ,
+              content: Text('There was an error '+error.toString()),
+              actions: [
+                TextButton(
+                    onPressed: (){
+                      Navigator.pop(context);// TO remove alert dialog
+                      //Then will be automatically executed when alert dialog is closed
+                    },
+                    child:Text('Okay')
+                )
+              ],
+            )
+        );
+      }
+
+      );
     }
-    Navigator.pop(context);
 
     }
 

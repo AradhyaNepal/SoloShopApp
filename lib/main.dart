@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:solo_shop_app_practice/ManageProduct.dart';
-import 'package:solo_shop_app_practice/edit_product.dart';
-import 'package:solo_shop_app_practice/screen/orders_detail/page/OrdersPage.dart';
-import 'package:solo_shop_app_practice/screen/orders_detail/providers/OrderProvider.dart';
-import 'package:solo_shop_app_practice/screen/product_cart/page/CartPage.dart';
-import 'package:solo_shop_app_practice/screen/product_cart/providers/CartProvider.dart';
-import 'package:solo_shop_app_practice/screen/products_overview/providers/ProductsProvider.dart';
-import 'package:solo_shop_app_practice/screen/product_detail/page/ProductDetails.dart';
-import 'package:solo_shop_app_practice/screen/products_overview/page/ProductsOverview.dart';
+import 'package:solo_shop_app_practice/screen/cart/page/CartPage.dart';
+import 'package:solo_shop_app_practice/screen/cart/providers/CartProvider.dart';
+import 'package:solo_shop_app_practice/screen/orders/page/OrdersPage.dart';
+import 'package:solo_shop_app_practice/screen/orders/providers/OrderProvider.dart';
+import 'package:solo_shop_app_practice/screen/products/page/ProductsOverview.dart';
+import 'screen/products/page/ManageProduct.dart';
+import 'screen/products/page/EditProduct.dart';
+import 'screen/products/page/ProductDetails.dart';
 import 'package:provider/provider.dart';
+
+import 'screen/products/providers/ProductsProvider.dart';
 
 void main()=> runApp(MyApp());
 

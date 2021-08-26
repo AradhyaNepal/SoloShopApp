@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:solo_shop_app_practice/screen/product_cart/providers/CartProvider.dart';
 import 'package:solo_shop_app_practice/models/Product.dart';
-import 'package:solo_shop_app_practice/screen/product_detail/page/ProductDetails.dart';
+import 'package:solo_shop_app_practice/screen/cart/providers/CartProvider.dart';
+import '../page/ProductDetails.dart';
 
 class SpecificProductWidget extends StatelessWidget {
 

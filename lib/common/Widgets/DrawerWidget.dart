@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:solo_shop_app_practice/ManageProduct.dart';
-import 'package:solo_shop_app_practice/screen/orders_detail/page/OrdersPage.dart';
-import '../../screen/products_overview/page/ProductsOverview.dart';
+import 'package:solo_shop_app_practice/screen/orders/page/OrdersPage.dart';
+import 'package:solo_shop_app_practice/screen/products/page/ProductsOverview.dart';
+import '../../screen/products/page/ManageProduct.dart';
 class DrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

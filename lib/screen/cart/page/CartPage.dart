@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solo_shop_app_practice/models/Cart.dart';
-import 'package:solo_shop_app_practice/screen/orders_detail/providers/OrderProvider.dart';
-import 'package:solo_shop_app_practice/screen/product_cart/providers/CartProvider.dart';
-import 'package:solo_shop_app_practice/screen/product_cart/widgets/CartWidget.dart';
+import 'package:solo_shop_app_practice/screen/cart/providers/CartProvider.dart';
+import 'package:solo_shop_app_practice/screen/cart/widgets/CartWidget.dart';
+import 'package:solo_shop_app_practice/screen/cart/widgets/OrderButtonWidget.dart';
 
 class CartPage extends StatelessWidget {
   static const route='/CartPage';
@@ -31,16 +31,8 @@ class CartPage extends StatelessWidget {
                 ),
                 backgroundColor: Theme.of(context).primaryColor,
               ),
-              TextButton(onPressed:(){
-                Provider.of<OrderProvider>(context,listen: false).addOrder(
-                    cartProducts:cartProvider.items.values.toList(),
-                    total:cartProvider.totalAmount);
-                cartProvider.clear();
+              OrderButtonWidget(),
 
-              },
-                  child: Text(
-                      'Order'
-                  )),
             ],
           ),
         ),

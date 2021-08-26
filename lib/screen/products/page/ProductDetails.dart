@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solo_shop_app_practice/models/Product.dart';
-import 'package:solo_shop_app_practice/screen/products_overview/providers/ProductsProvider.dart';
+import 'package:solo_shop_app_practice/screen/products/providers/ProductsProvider.dart';
 
 class ProductDetails extends StatelessWidget {
   static const route='/ProductDetails';
