@@ -22,11 +22,11 @@ class Product with ChangeNotifier{
   }
   );
 
-  void toggleFavorites(String token,String userId) async{
+  void toggleFavorites(String? token,String? userId) async{
     bool oldStatus=isFavorite;
     isFavorite=!isFavorite;
     notifyListeners();
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/userFavorites/$userId/$id.json');
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/userFavorites/$userId/$id.json?auth=$token');
     try{
       final response=await http.put(url,body: json.encode(
         isFavorite,

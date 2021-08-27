@@ -9,7 +9,7 @@ class ManageProduct extends StatelessWidget {
   static const route='/ManageProduct';
 
   Future<void> refresh(BuildContext context) async{
-    await Provider.of<ProductsProvider>(context,listen: false).fetchProduct();
+    await Provider.of<ProductsProvider>(context,listen: false).fetchProduct(true);
   }
 
   @override

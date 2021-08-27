@@ -6,7 +6,7 @@ class CartProvider with ChangeNotifier{
   Map<String,Cart> _items={};
 
   Map<String,Cart> get items{
-    return {...items};
+    return {..._items};
   }
 
   void addItem(String productId,double price,String title){

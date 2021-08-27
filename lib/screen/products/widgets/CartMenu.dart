@@ -23,24 +23,22 @@ class CartMenu extends StatelessWidget {
 
               top: 0,
               right: 0,
-              child: FittedBox(
-                child: length=='0'?SizedBox():
-                Container(
-                  margin: EdgeInsets.all(3),
-                  padding: EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-
-                    child: Text(
-                        length,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
+              child: length=='0'?SizedBox():
+              Container(
+                margin: EdgeInsets.all(3),
+                padding: EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
                 ),
+
+                  child: Text(
+                      length,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
               ),
             )
           ],

@@ -7,8 +7,8 @@ import 'dart:convert';
 
 class ProductsProvider with ChangeNotifier{
   //Add auth in orders and products later
-  final String authToken;
-  final String userId;
+  String? authToken;
+  String? userId;
   ProductsProvider(this.authToken,this._items,this.userId);
   List<Product> _items=[];
 
@@ -40,13 +40,13 @@ class ProductsProvider with ChangeNotifier{
 
   Future<void> fetchProduct([bool filterByUser=false]) async{//[optional but need default value]
     final filterString=filterByUser?'orderBy="createrId"&equalTo="$userId"':'';
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json?auth=$authToken&$filterByUser');
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json?auth=$authToken&$filterString');
 
     try{
       final response=await http.get(url);
       final extractedData=json.decode(response.body) as Map<String,dynamic>;
       //is null check, and there is error in this url
-      url=Uri.parse('https://fir-practice-fff91.firebaseio.com/userFavorites/$userId/$id.json');
+      url=Uri.parse('https://fir-practice-fff91.firebaseio.com/userFavorites/$userId.json?auth=$authToken');
       final favoriteResponse=await http.get(url);
       final favoriteData=json.decode(favoriteResponse.body);
       final List<Product> loadedProduct=[];

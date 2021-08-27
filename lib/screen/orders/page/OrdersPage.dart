@@ -20,7 +20,7 @@ class OrderPage extends StatelessWidget {
           if(snapShot.connectionState==ConnectionState.waiting){
             return Center(child: CircularProgressIndicator(),);
           }
-          else if (snapShot.error != null){
+          else if (snapShot.error == null){
             return Consumer<OrderProvider>(
               builder: (context,ordersProvider,child){
                 return ListView.builder(

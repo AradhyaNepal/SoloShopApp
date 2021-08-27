@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:solo_shop_app_practice/screen/authetication/page/SignInPage.dart';
 import 'package:solo_shop_app_practice/screen/authetication/page/SignUpPage.dart';
-import 'package:solo_shop_app_practice/screen/authetication/provider/AlternativeAuthenticationClass.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/Auth.dart';
+import 'package:solo_shop_app_practice/screen/authetication/provider/LoadingProvider.dart';
 import 'package:solo_shop_app_practice/screen/cart/page/CartPage.dart';
 import 'package:solo_shop_app_practice/screen/cart/providers/CartProvider.dart';
 import 'package:solo_shop_app_practice/screen/orders/page/OrdersPage.dart';
@@ -17,11 +15,11 @@ import 'package:provider/provider.dart';
 
 import 'screen/products/providers/ProductsProvider.dart';
 
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
-}
+void main() {
+    runApp(MyApp());
+
+  }
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,15 +30,27 @@ class MyApp extends StatelessWidget {
           create: (context)=>Auth(),
         ),
         ChangeNotifierProxyProvider<Auth,ProductsProvider>(
+          create: (context){
+            Auth authProvider=Provider.of<Auth>(context,listen: false);
+            return ProductsProvider(authProvider.token, [],authProvider.userId);
+           },
            update:(context,auth,previousProducts)=>ProductsProvider(auth.token,
-               previousProducts == null?[]:previousProducts.items),
+               previousProducts == null?[]:previousProducts.items,auth.userId),
         ),
         ChangeNotifierProvider(
           create: (context)=>CartProvider(),
         ),
-        ChangeNotifierProvider(
-            create: (context)=>OrderProvider(),
+        ChangeNotifierProxyProvider<Auth,OrderProvider>(
+            create: (context){
+              Auth authProvider=Provider.of<Auth>(context,listen: false);
+              return OrderProvider(authProvider.token,[], authProvider.userId);
+            },
+            update: (context,auth,previousOrder)=>OrderProvider(auth.token, previousOrder==null?[]:previousOrder.orders, auth.userId),
+
         ),
+        ChangeNotifierProvider(
+          create: (context)=>LoadingProvider(),
+          ),
 
       ],
       child: MaterialApp(
@@ -49,7 +59,7 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.deepOrange,
           fontFamily: 'Lato'
         ),
-        initialRoute: ProductsOverview.route,
+        initialRoute: SignInPage.route,
         routes: {
           ProductsOverview.route:(context)=>ProductsOverview(),
           ProductDetails.route:(context)=>ProductDetails(),

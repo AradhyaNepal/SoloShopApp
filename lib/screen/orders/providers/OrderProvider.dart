@@ -5,9 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 class OrderProvider with ChangeNotifier{
 
-  final String authToken;
-  final String userId;
-  OrderProvider(this.authToken,this.userId);
+  String? authToken;
+  String? userId;
+  OrderProvider(this.authToken,this._orders,this.userId);
   List<Order> _orders=[];
 
   List<Order> get orders{
@@ -15,26 +15,34 @@ class OrderProvider with ChangeNotifier{
   }
 
   Future<void> fetchOrder() async{
+    _orders=[];
     Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/orders/$userId.json?auth=$authToken');
-    final response=await http.get(url);
     final List<Order> loadedOrders=[];
-    final Map<String,dynamic>? extractedData=json.decode(response.body) as Map<String,dynamic>;
-    if (extractedData==null) return;
-    extractedData.forEach((key, value) {
-      loadedOrders.add(Order(
+    try{
+      final response=await http.get(url);
+      final Map<String,dynamic>? extractedData=json.decode(response.body) as Map<String,dynamic>;
+      if (extractedData==null) return;
+      extractedData.forEach((key, value) {
+        loadedOrders.add(Order(
           id: key,
           amount: value['amount'],
           products: (value['products'] as List<dynamic>).map((item)=>Cart(
               id: item['id'],
-              title: item['price'],
-              quantity: item['qunatity'],
+              title: item['title'],
+              quantity: item['quantity'],
               price: item['price']
           )
 
           ).toList(),
           dateTime: DateTime.parse(value['dateTime']),
-          ));
-    });
+        ));
+      });
+    }
+    catch(error){
+      throw error;
+    }
+
+    print('I was here');
     _orders=loadedOrders.reversed.toList();
     notifyListeners();
   }
@@ -50,7 +58,7 @@ class OrderProvider with ChangeNotifier{
         'title':e.title,
         'quantity':e.quantity,
         'price':e.price,
-      }),
+      }).toList(),
 
     }));
     _orders.insert(0, Order(
