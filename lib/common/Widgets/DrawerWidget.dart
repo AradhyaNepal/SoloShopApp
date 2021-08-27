@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:solo_shop_app_practice/screen/authetication/provider/Auth.dart';
 import 'package:solo_shop_app_practice/screen/orders/page/OrdersPage.dart';
 import 'package:solo_shop_app_practice/screen/products/page/ProductsOverview.dart';
 import '../../screen/products/page/ManageProduct.dart';
@@ -39,7 +41,19 @@ class DrawerWidget extends StatelessWidget {
               Navigator.pushReplacementNamed(context,ManageProduct.route);
             },
 
-          )
+          ),
+
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text('Log Out'),
+            onTap: (){
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/');
+              Provider.of<Auth>(context,listen: false).logOut();
+            },
+
+          ),
         ],
       ),
     );

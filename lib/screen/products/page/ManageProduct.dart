@@ -14,7 +14,6 @@ class ManageProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productProvider=Provider.of<ProductsProvider>(context);
     return Scaffold(
       drawer: DrawerWidget(),
       appBar: AppBar(
@@ -29,18 +28,30 @@ class ManageProduct extends StatelessWidget {
 
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: ()=>refresh(context),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListView.builder(
-            itemCount: productProvider.items.length,
-            itemBuilder: (context,index)=>SpecificUserProduct(
-              id: productProvider.items[index].id,
-                title: productProvider.items[index].title,
-                imageUrl: productProvider.items[index].imageUrl),
-          ),
-        ),
+      body: FutureBuilder(
+        future: refresh(context),
+        builder: (context,snapShot){
+          return snapShot.connectionState == ConnectionState.waiting?
+          Center(child: CircularProgressIndicator(),):
+          RefreshIndicator(
+            onRefresh: ()=>refresh(context),
+            child: Consumer<ProductsProvider>(
+              builder: (context,productProvider,child){
+                return Padding(
+                  padding: EdgeInsets.all(8),
+                  child: ListView.builder(
+                    itemCount: productProvider.items.length,
+                    itemBuilder: (context,index)=>SpecificUserProduct(
+                        id: productProvider.items[index].id,
+                        title: productProvider.items[index].title,
+                        imageUrl: productProvider.items[index].imageUrl),
+                  ),
+                );
+              },
+
+            ),
+          );
+        },
       ),
     );
   }

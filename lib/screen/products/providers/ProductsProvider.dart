@@ -8,41 +8,9 @@ import 'dart:convert';
 class ProductsProvider with ChangeNotifier{
   //Add auth in orders and products later
   final String authToken;
-  ProductsProvider(this.authToken,this._items);
-  List<Product> _items=[
-  //   Product(
-  //   id: 'p1',
-  //   title: 'Red Shirt 1',
-  //   description: 'A red shirt - It is pretty red',
-  //   price: 29.99,
-  //   imageUrl: 'https://static-01.daraz.com.np/p/3b17b441784d55f7fafe494c2b3ae4c0.jpg',
-  //
-  // ),
-  //   Product(
-  //     id: 'p2',
-  //     title: 'Red Shirt 2',
-  //     description: 'A red shirt - It is pretty red',
-  //     price: 29.99,
-  //     imageUrl: 'https://static-01.daraz.com.np/p/3b17b441784d55f7fafe494c2b3ae4c0.jpg',
-  //
-  //   ),
-  //   Product(
-  //     id: 'p3',
-  //     title: 'Red Shirt 3',
-  //     description: 'A red shirt - It is pretty red',
-  //     price: 29.99,
-  //     imageUrl: 'https://static-01.daraz.com.np/p/3b17b441784d55f7fafe494c2b3ae4c0.jpg',
-  //
-  //   ),
-  //   Product(
-  //     id: 'p4',
-  //     title: 'Red Shirt 4',
-  //     description: 'A red shirt - It is pretty red',
-  //     price: 29.99,
-  //     imageUrl: 'https://static-01.daraz.com.np/p/3b17b441784d55f7fafe494c2b3ae4c0.jpg',
-
-    // )
-  ];
+  final String userId;
+  ProductsProvider(this.authToken,this._items,this.userId);
+  List<Product> _items=[];
 
 
   List<Product> get favItems =>_items.where((product)=>product.isFavorite,).toList();
@@ -58,7 +26,7 @@ class ProductsProvider with ChangeNotifier{
       'description':product.description,
       'imageUrl':product.imageUrl,
       'price':product.price,
-      'isFavorite':product.isFavorite,
+      'createrId':userId,
     })).then((value) {
       product.id=json.decode(value.body).toString();
         _items.add(product);
@@ -70,11 +38,17 @@ class ProductsProvider with ChangeNotifier{
     );
   }
 
-  Future<void> fetchProduct() async{
-    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json?auth=$authToken');
+  Future<void> fetchProduct([bool filterByUser=false]) async{//[optional but need default value]
+    final filterString=filterByUser?'orderBy="createrId"&equalTo="$userId"':'';
+    Uri url=Uri.parse('https://fir-practice-fff91.firebaseio.com/products.json?auth=$authToken&$filterByUser');
+
     try{
       final response=await http.get(url);
       final extractedData=json.decode(response.body) as Map<String,dynamic>;
+      //is null check, and there is error in this url
+      url=Uri.parse('https://fir-practice-fff91.firebaseio.com/userFavorites/$userId/$id.json');
+      final favoriteResponse=await http.get(url);
+      final favoriteData=json.decode(favoriteResponse.body);
       final List<Product> loadedProduct=[];
       extractedData.forEach((key, value) {
         loadedProduct.add(Product(
@@ -82,8 +56,8 @@ class ProductsProvider with ChangeNotifier{
             title: value['title'],
             description: value['description'],
             price: value['price'],
-            imageUrl:value['imageUrl'],
-          isFavorite: value['isFavorite']
+            isFavorite: favoriteData==null?false:favoriteData[key] ?? false, // ?? check null
+            imageUrl:value['imageUrl']
         ));
       });
 
