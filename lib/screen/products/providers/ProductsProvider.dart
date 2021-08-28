@@ -55,8 +55,8 @@ class ProductsProvider with ChangeNotifier{
             id: key,
             title: value['title'],
             description: value['description'],
-            price: value['price'],
-            isFavorite: favoriteData==null?false:favoriteData[key] ?? false, // ?? check null
+            price: value['price'] as double,
+            isFavorite: favoriteData==null?false:favoriteData[key] as bool? ?? false, // ?? check null
             imageUrl:value['imageUrl']
         ));
       });

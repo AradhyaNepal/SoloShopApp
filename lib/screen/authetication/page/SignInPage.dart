@@ -110,7 +110,7 @@ class _SignInPageState extends State<SignInPage> {
                                               passwordController.text.trim())
                                           .then((value) {
                                         loadingProvider.toggleLoading();
-                                        Navigator.pushNamed(context, ProductsOverview.route);
+                                        Navigator.pushReplacementNamed(context, ProductsOverview.route);
                                       }).onError((error,_){
                                         ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(

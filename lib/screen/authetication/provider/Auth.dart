@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solo_shop_app_practice/models/HttpException.dart';
 class Auth with ChangeNotifier{
    String? _token;
@@ -19,10 +20,10 @@ class Auth with ChangeNotifier{
     if (_expiryDate !=null && _expiryDate!.isAfter(DateTime.now()) && _token !=null){
       return _token;
     }
-    return "";
+    return null;
   }
   Future<void> signUp(String email,String password) async{
-    return authenticate(email, password, 'signUp');
+    return authenticate(email, password, 'signUp').then((value) => null);
 
   }
 
@@ -30,11 +31,51 @@ class Auth with ChangeNotifier{
   String? get userId=>_userId;
 
   Future<void> login(String email,String password) async{
-   return authenticate(email, password, 'signInWithPassword');
+   return authenticate(email, password, 'signInWithPassword').then((value) async{
+     final responseData=json.decode(value.body.toString());
+     if (responseData['error'] != null){
+       print('I was here');
+       throw HttpException(responseData['error']['message']);
+     }
+
+     _token=responseData['idToken'];
+     _userId=responseData['localId'];
+     _expiryDate=DateTime.now().add(Duration(seconds: int.parse(responseData['expiresIn'])));
+     notifyListeners();
+     final prefs=await SharedPreferences.getInstance();
+     prefs.setString('userData',json.encode({
+       'userId':_userId,
+       'token':_token,
+       'expiryDate':_expiryDate!.toIso8601String(),
+     }));
+   });
+
+
 
   }
 
-  Future<void> authenticate(String email,String password,String uses) async{
+
+
+  Future<bool> tryAutoLogin() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    String? prefsData=prefs.getString('userData');
+    final userData = json.decode(prefsData!) as Map<String, dynamic>;
+    final expiryDate = DateTime.parse(userData['expiryDate'] as String);
+    if (expiryDate.isBefore(DateTime.now())) {
+      return false;
+    }
+    _token = userData['token'] as String;
+    _userId = userData['userId'] as String;
+    _expiryDate = expiryDate;
+    notifyListeners();
+    autoLogout();
+    return true;
+  }
+
+  Future<http.Response> authenticate(String email,String password,String uses) async{
     Uri uri=Uri.parse('https://identitytoolkit.googleapis.com/v1/accounts:$uses?key=AIzaSyC2hz_OpmfV0KQSnZDNiKBrGmV3pM0MaAE');
     try{
       Response response=await http.post(uri,body: json.encode({
@@ -42,17 +83,8 @@ class Auth with ChangeNotifier{
         'password':password,
         'returnSecureToken':true,
       }));
-      final responseData=json.decode(response.body.toString());
-      if (responseData['error'] != null){
-        print('I was here');
-        throw HttpException(responseData['error']['message']);
-      }
+      return response;
 
-      _token=responseData['idToken'];
-      _userId=responseData['localId'];
-      _expiryDate=DateTime.now().add(Duration(seconds: int.parse(responseData['expiresIn'])));
-      autoLogout();
-      notifyListeners();
     }catch(error){
       print(error);
       throw error;
@@ -61,7 +93,7 @@ class Auth with ChangeNotifier{
   }
 
 
-  void logOut(){
+  Future<void> logOut() async{
     if (_authTimer!=null){
       _authTimer!.cancel();
       _authTimer=null;
@@ -69,9 +101,9 @@ class Auth with ChangeNotifier{
     _token=null;
     _userId=null;
     _expiryDate=null;
-
-
     notifyListeners();
+    final prefs=await SharedPreferences.getInstance();
+    prefs.clear();
   }
 
 
