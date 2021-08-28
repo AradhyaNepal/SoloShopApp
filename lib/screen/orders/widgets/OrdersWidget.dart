@@ -20,7 +20,6 @@ class _OrdersWidgetState extends State<OrdersWidget> {
       margin: EdgeInsets.all(10),
       child: Column(children: [
         ListTile(title: Text('${widget.order.amount}'),
-        //TODO: Supposed to import init to format date and display in subtitle
           trailing: IconButton(
             onPressed: (){
               setState(() {
