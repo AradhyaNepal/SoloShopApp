@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -22,8 +23,12 @@ class Auth with ChangeNotifier{
     }
     return null;
   }
-  Future<void> signUp(String email,String password) async{
-    return authenticate(email, password, 'signUp').then((value) => null);
+  Future<void> signUp(String email,String password,String url) async{
+    return authenticate(email, password, 'signUp').then((value) {
+      FirebaseFirestore.instance.collection('users').doc(json.decode(value.body.toString())['localId']).set({
+        'profile':url,
+      });
+    });
 
   }
 

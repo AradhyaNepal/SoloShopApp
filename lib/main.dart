@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:solo_shop_app_practice/screen/authetication/page/ProfilePage.dart';
 import 'package:solo_shop_app_practice/screen/authetication/page/SignInPage.dart';
 import 'package:solo_shop_app_practice/screen/authetication/page/SignUpPage.dart';
 import 'package:solo_shop_app_practice/screen/authetication/page/SplashPage.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/Auth.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/LoadingProvider.dart';
+import 'package:solo_shop_app_practice/screen/authetication/provider/PickImageProvider.dart';
 import 'package:solo_shop_app_practice/screen/cart/page/CartPage.dart';
 import 'package:solo_shop_app_practice/screen/cart/providers/CartProvider.dart';
 import 'package:solo_shop_app_practice/screen/orders/page/OrdersPage.dart';
@@ -16,7 +19,10 @@ import 'package:provider/provider.dart';
 
 import 'screen/products/providers/ProductsProvider.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
     runApp(MyApp());
 
   }
@@ -53,6 +59,10 @@ class MyApp extends StatelessWidget {
           create: (context)=>LoadingProvider(),
           ),
 
+        ChangeNotifierProvider(
+            create: (context)=>PickImageProvider()
+        ),
+
       ],
       child: Consumer<Auth>(
         builder: (context,auth,child){
@@ -79,6 +89,7 @@ class MyApp extends StatelessWidget {
               EditProduct.route:(context)=>EditProduct(),
               SignInPage.route:(context)=>SignInPage(),
               SignUpPage.route:(context)=>SignUpPage(),
+              ProfilePage.route:(context)=>ProfilePage(),
             },
           );
         },

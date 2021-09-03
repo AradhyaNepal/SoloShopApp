@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solo_shop_app_practice/common/Constants.dart';
-import 'package:solo_shop_app_practice/models/HttpException.dart';
 import 'package:solo_shop_app_practice/screen/authetication/page/SignUpPage.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/Auth.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/LoadingProvider.dart';

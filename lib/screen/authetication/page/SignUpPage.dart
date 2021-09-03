@@ -1,9 +1,13 @@
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:solo_shop_app_practice/common/Constants.dart';
-import 'package:solo_shop_app_practice/models/HttpException.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/Auth.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/LoadingProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:solo_shop_app_practice/screen/authetication/provider/PickImageProvider.dart';
+import 'package:solo_shop_app_practice/screen/authetication/widgets/ImagePicker.dart';
+import 'package:path/path.dart' as Path;
 
 class SignUpPage extends StatefulWidget {
   static const String route = 'SignUpPage';
@@ -17,16 +21,18 @@ class _SignUpPageState extends State<SignUpPage> {
   final passwordNameController = TextEditingController();
   final confirmPasswordNameController = TextEditingController();
   GlobalKey<FormState> key = GlobalKey<FormState>();
+  String? _updatedImageUrl;
 
   @override
   void initState() {
     // TODO: implement initState
-    Provider.of<LoadingProvider>(context,listen: false).setDefault();
+    Provider.of<LoadingProvider>(context, listen: false).setDefault();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final imageProvider = Provider.of<PickImageProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Sign Up'),
@@ -35,6 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
         key: key,
         child: ListView(
           children: [
+            ImagePickerWidget(),
             Container(
               alignment: Alignment.center,
               padding: EdgeInsets.all(10),
@@ -113,26 +120,42 @@ class _SignUpPageState extends State<SignUpPage> {
                           style: ElevatedButton.styleFrom(primary: Colors.red),
                           onPressed: () {
                             if (key.currentState!.validate()) {
-                              loadingProvider.toggleLoading();
-                              Future.delayed(Duration(seconds: 1), () {
+                              if (imageProvider.doImageExist()) {
+                                  loadingProvider.toggleLoading();
+                                uploadFile(imageProvider.pickedImage)
+                                    .then((value) {
+                                  Future.delayed(Duration(seconds: 1), () {
+                                    Provider.of<Auth>(context, listen: false)
+                                        .signUp(
+                                            emailNameController.text.trim(),
+                                            passwordNameController.text.trim(),
+                                            _updatedImageUrl!)
+                                        .then((value) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                              SnackBar(content: Text('Done')));
+                                      loadingProvider.toggleLoading();
+                                      Navigator.pop(context);
+                                      imageProvider.refresh();
+                                    }).onError((error, stackTrace) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(error.toString())));
+                                      loadingProvider.toggleLoading();
 
-                                  Provider.of<Auth>(context, listen: false)
-                                      .signUp(emailNameController.text.trim(),
-                                          passwordNameController.text.trim())
-                                      .then((value) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Done')));
-                                    loadingProvider.toggleLoading();
-                                    Navigator.pop(context);
-                                  }).onError((error, stackTrace){
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(error.toString())));
-                                    loadingProvider.toggleLoading();
-                                    Navigator.pop(context);
+                                    });
                                   });
-
-                              });
+                                }).onError((error, stackTrace){
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                      content: Text(error.toString())));
+                                  loadingProvider.toggleLoading();
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text('Please Pick Image')));
+                              }
                             }
                           },
                           child: Text('Sign Up'),
@@ -146,6 +169,8 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  void pickImage() {}
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -153,5 +178,20 @@ class _SignUpPageState extends State<SignUpPage> {
     passwordNameController.dispose();
     confirmPasswordNameController.dispose();
     super.dispose();
+  }
+
+  Future<void> uploadFile(File? _image) async {
+    firebase_storage.Reference storageReference = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child('profile/${Path.basename(_image!.path)}}');
+    await storageReference.putFile(_image).then((_) {
+      storageReference.getDownloadURL().then((fileURL) {
+        print(fileURL);
+        setState(() {
+          _updatedImageUrl = fileURL;
+        });
+      });
+    });
   }
 }

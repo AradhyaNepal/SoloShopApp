@@ -18,33 +18,39 @@ class _OrdersWidgetState extends State<OrdersWidget> {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(10),
-      child: Column(children: [
-        ListTile(title: Text('${widget.order.amount}'),
-          trailing: IconButton(
-            onPressed: (){
-              setState(() {
-                _expanded=!_expanded;
-              });
+      child: AnimatedContainer(
+        duration: Duration(seconds: 3),
+        child: Column(children: [
+          ListTile(
+            contentPadding: EdgeInsets.all(10),
+            title: Text('${widget.order.amount}'),
+            trailing: IconButton(
+              onPressed: (){
+                setState(() {
+                  _expanded=!_expanded;
+                });
 
-            },
-            icon: Icon(_expanded?Icons.expand_less:Icons.expand_more),
+              },
+              icon: Icon(_expanded?Icons.expand_less:Icons.expand_more),
+            ),
           ),
-        ),
-        if (_expanded) Container(
-          height: min(widget.order.products.length*20+100,180),
-          child: ListView.builder(
-            itemBuilder: (context,index){
-              Cart cart=widget.order.products[index];
-              return Row(
-                children: [
-                  Text('${cart.quantity} x ${cart.price}')
-                ],
-              );
-            },
-            itemCount: widget.order.products.length,
-          ),
-        )
-      ],),
+          if (_expanded) Container(
+            height: min(widget.order.products.length*20+100,180),
+            child: ListView.builder(
+              padding: EdgeInsets.all(10),
+              itemBuilder: (context,index){
+                Cart cart=widget.order.products[index];
+                return Row(
+                  children: [
+                    Text('${cart.quantity} x ${cart.price}')
+                  ],
+                );
+              },
+              itemCount: widget.order.products.length,
+            ),
+          )
+        ],),
+      ),
     );
   }
 }

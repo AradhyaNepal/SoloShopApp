@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:solo_shop_app_practice/screen/authetication/page/ProfilePage.dart';
 import 'package:solo_shop_app_practice/screen/authetication/provider/Auth.dart';
 import 'package:solo_shop_app_practice/screen/orders/page/OrdersPage.dart';
 import 'package:solo_shop_app_practice/screen/products/page/ProductsOverview.dart';
@@ -45,6 +46,17 @@ class DrawerWidget extends StatelessWidget {
 
           Divider(),
           ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Profile Pic'),
+            onTap: (){
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, ProfilePage.route);
+            },
+
+          ),
+
+          Divider(),
+          ListTile(
             leading: Icon(Icons.logout),
             title: Text('Log Out'),
             onTap: (){
@@ -54,6 +66,9 @@ class DrawerWidget extends StatelessWidget {
             },
 
           ),
+
+
+
         ],
       ),
     );

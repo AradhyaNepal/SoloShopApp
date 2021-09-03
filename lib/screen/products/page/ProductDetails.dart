@@ -41,7 +41,7 @@ class ProductDetails extends StatelessWidget {
                 Column(
                   children: [
                     SizedBox(height: 10,),
-                    Text('${loadedProduct.price})'),
+                    Text('${loadedProduct.price}'),
                     SizedBox(height: 10,),
                     Text(loadedProduct.description),
                     SizedBox(height:800 ,)
